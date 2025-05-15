@@ -1,0 +1,16 @@
+<input
+  type="text"
+  [(ngModel)]="search"
+  (input)="onSearch()"
+  placeholder="Search countries..."
+/>
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error">{{ error }}</div>
+<ul *ngIf="!loading && !error">
+  <li
+    *ngFor="let country of filteredCountries"
+    (click)="goToDetail(country.name.common)"
+  >
+    {{ country.name.common }} - {{ country.region }}
+  </li>
+</ul>
