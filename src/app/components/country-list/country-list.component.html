@@ -4,8 +4,12 @@
   (input)="onSearch()"
   placeholder="Search countries..."
 />
+
 <div *ngIf="loading">Loading...</div>
 <div *ngIf="error">{{ error }}</div>
+<div class="sort">
+  <button (click)="toggleSort()">Sort by Name {{ sortAsc ? "↑" : "↓" }}</button>
+</div>
 <ul *ngIf="!loading && !error">
   <li
     *ngFor="let country of filteredCountries"

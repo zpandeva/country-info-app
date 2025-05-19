@@ -45,6 +45,10 @@ export class CountryListComponent implements OnInit {
       return 0;
     });
   }
+  toggleSort(): void {
+    this.sortAsc = !this.sortAsc;
+    this.sortCountries();
+  }
 
   onSearch(): void {
     const query = this.search.toLowerCase();
