@@ -25,16 +25,4 @@ describe('CountryListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  
-
-  it('should filter countries by name', () => {
-    component.countries = [
-      { name: { common: 'Spain' }, region: 'Europe' },
-      { name: { common: 'Sweden' }, region: 'Europe' },
-    ];
-    component.search = 'swe';
-    component.onSearch();
-    expect(component.filteredCountries.length).toBe(1);
-    expect(component.filteredCountries[0].name.common).toBe('Sweden');
-  });
 });

@@ -1,18 +1,20 @@
 <input
   type="text"
-  [(ngModel)]="search"
-  (input)="onSearch()"
+  [value]="search()"
+  (input)="onSearch($event)"
   placeholder="Search countries..."
 />
-
-<div *ngIf="loading">Loading...</div>
-<div *ngIf="error">{{ error }}</div>
 <div class="sort">
-  <button (click)="toggleSort()">Sort by Name {{ sortAsc ? "↑" : "↓" }}</button>
+  <button (click)="toggleSort()">
+    Sort by Name {{ sortAsc() ? "↑" : "↓" }}
+  </button>
 </div>
-<ul *ngIf="!loading && !error">
+<div *ngIf="loading()">Loading...</div>
+<div *ngIf="error()">{{ error() }}</div>
+
+<ul *ngIf="!loading() && !error()">
   <li
-    *ngFor="let country of filteredCountries"
+    *ngFor="let country of filteredCountries()"
     (click)="goToDetail(country.name.common)"
   >
     {{ country.name.common }} - {{ country.region }}

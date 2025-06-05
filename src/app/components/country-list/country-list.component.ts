@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { CountryService } from '../../services/country.service';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -11,50 +11,50 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule],
 })
 export class CountryListComponent implements OnInit {
-  countries: any[] = [];
-  filteredCountries: any[] = [];
-  loading = false;
-  error = '';
-  search = '';
-  sortAsc = true;
+  countries = signal<any[]>([]);
+  search = signal('');
+  sortAsc = signal(true);
+  loading = signal(false);
+  error = signal('');
+
+  // Automatically reacts to changes in `countries`, `search`, or `sortAsc`
+  filteredCountries = computed(() => {
+    const q = this.search().toLowerCase();
+    const sorted = [...this.countries()]
+      .filter((c) => c.name.common.toLowerCase().includes(q))
+      .sort((a, b) => {
+        const nameA = a.name.common.toLowerCase();
+        const nameB = b.name.common.toLowerCase();
+        return this.sortAsc()
+          ? nameA.localeCompare(nameB)
+          : nameB.localeCompare(nameA);
+      });
+    return sorted;
+  });
 
   constructor(private countryService: CountryService, private router: Router) {}
 
   ngOnInit(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.countryService.getAllCountries().subscribe({
       next: (data) => {
-        this.countries = data;
-        this.filteredCountries = data;
-        this.loading = false;
-        this.sortCountries();
+        this.countries.set(data);
+        this.loading.set(false);
       },
-      error: (err) => {
-        this.error = 'Failed to load countries.';
-        this.loading = false;
+      error: () => {
+        this.error.set('Failed to load countries.');
+        this.loading.set(false);
       },
     });
   }
 
-  sortCountries(): void {
-    this.filteredCountries.sort((a, b) => {
-      const nameA = a.name.common.toLowerCase();
-      const nameB = b.name.common.toLowerCase();
-      if (nameA < nameB) return this.sortAsc ? -1 : 1;
-      if (nameA > nameB) return this.sortAsc ? 1 : -1;
-      return 0;
-    });
+  onSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.search.set(input.value);
   }
+
   toggleSort(): void {
-    this.sortAsc = !this.sortAsc;
-    this.sortCountries();
-  }
-
-  onSearch(): void {
-    const query = this.search.toLowerCase();
-    this.filteredCountries = this.countries.filter((country) =>
-      country.name.common.toLowerCase().includes(query)
-    );
+    this.sortAsc.set(!this.sortAsc());
   }
 
   goToDetail(name: string): void {

@@ -26,7 +26,7 @@ describe('CountryDetailComponent', () => {
           },
         },
       ],
-    }).compileComponents();
+    }).compileComponents(); 
 
     fixture = TestBed.createComponent(CountryDetailComponent);
     component = fixture.componentInstance;
